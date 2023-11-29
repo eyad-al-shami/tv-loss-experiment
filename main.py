@@ -39,7 +39,7 @@ def show_images(use_tv_loss=False):
 
 if __name__ == '__main__':
     
-    # add an argument parser to determine if we should use tv loss or not
+
     parser = ArgumentParser()
     parser.add_argument('--tv_loss', action='store_true')
     args = parser.parse_args()

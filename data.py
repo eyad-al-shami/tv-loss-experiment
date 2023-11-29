@@ -14,9 +14,8 @@ class RandomDataset(Dataset):
         '''
         self.channels = channels
         self.input = torch.randn(channels, 64, 64)
-        # the label is a one channel mask with a checkerboard pattern
         self.label = torch.zeros(1, 64, 64)
-        self.step = step # the size of the checkerboard square
+        self.step = step
         for i in range(0, 64, self.step):
             for j in range(0, 64, self.step):
                 if (i // self.step) % 2 == (j // self.step) % 2:
