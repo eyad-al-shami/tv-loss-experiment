@@ -8,10 +8,11 @@ import pytorch_lightning as pl
 
 
 class SimpleMaskEstimator(pl.LightningModule):
-    def __init__(self, input_dim=96, use_tv_loss=False):
+    def __init__(self, input_dim=96, use_tv_loss=False, tv_loss_weight=0.1):
         super().__init__()
         
         self.use_tv_loss = use_tv_loss
+        self.tv_loss_weight = tv_loss_weight
         self.mask_estimator = nn.Sequential(
             nn.Conv2d(input_dim, 128, kernel_size=7, padding="same"),
             nn.ReLU(inplace=True),
@@ -34,7 +35,7 @@ class SimpleMaskEstimator(pl.LightningModule):
         
         if (self.use_tv_loss):
             tv_loss = self.total_variation_loss(y_hat).sum()
-            loss += tv_loss
+            loss += (tv_loss * self.tv_loss_weight)
         
         self.log('train_loss', loss, on_epoch=True, prog_bar=True)
         return loss
