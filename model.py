@@ -47,7 +47,7 @@ class SimpleMaskEstimator(pl.LightningModule):
         self.log('test_loss', loss, on_epoch=True, prog_bar=True)
     
     def configure_optimizers(self) -> Any:
-        optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
+        optimizer = torch.optim.Adam(self.parameters(), lr=0.005)
         return optimizer
     
     def total_variation_loss(self, x):
@@ -55,8 +55,8 @@ class SimpleMaskEstimator(pl.LightningModule):
         diff1 = x[..., 1:, :] - x[..., :-1, :]
         diff2 = x[..., :, 1:] - x[..., :, :-1]
 
-        res1 = diff1.abs().sum([1, 2, 3])
-        res2 = diff2.abs().sum([1, 2, 3])
+        res1 = torch.square(diff1).sum([1, 2, 3])
+        res2 = torch.square(diff2).sum([1, 2, 3])
         score = res1 + res2
         return score
 

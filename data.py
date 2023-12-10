@@ -5,21 +5,28 @@ import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
+import cv2
 
 class RandomDataset(Dataset):
-    def __init__(self, channels:int=96, step:int=2):
+    def __init__(self, channels:int=96, circle=False, step:int=8):
         '''
             channels: the number of channels in the input image
             step: the size of the checkerboard square
         '''
         self.channels = channels
         self.input = torch.randn(channels, 64, 64)
-        self.label = torch.zeros(1, 64, 64)
-        self.step = step
-        for i in range(0, 64, self.step):
-            for j in range(0, 64, self.step):
-                if (i // self.step) % 2 == (j // self.step) % 2:
-                    self.label[:, i:i+self.step, j:j+self.step] = 1
+        if not circle:
+            self.label = torch.zeros(1, 64, 64)
+            self.step = step
+            for i in range(0, 64, self.step):
+                for j in range(0, 64, self.step):
+                    if (i // self.step) % 2 == (j // self.step) % 2:
+                        self.label[:, i:i+self.step, j:j+self.step] = 1
+        else:
+            # read "lable.png" as the label in 1 channel
+            self.label = cv2.imread('label.png', cv2.IMREAD_GRAYSCALE)
+            self.label = torch.from_numpy(self.label).unsqueeze(0).float()
+            
         
     def __len__(self):
         return 1
